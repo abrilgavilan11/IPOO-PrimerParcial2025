@@ -100,8 +100,8 @@
 
         public function  asignarAsientosDisponibles($cantAsientos){
             $asignacionCompleta = false;
-            if($cantAsientos <= $this->cantAsientosTotales){
-                $cantAsientosRestantes = $this->cantAsientosTotales - $cantAsientos;
+            if($cantAsientos <= $this->getCantAsientosDisponibles()){
+                $cantAsientosRestantes = $this->getCantAsientosTotales() - $cantAsientos;
                 $this->setCantAsientosDisponibles($cantAsientosRestantes);
                 $asignacionCompleta = true;
             }

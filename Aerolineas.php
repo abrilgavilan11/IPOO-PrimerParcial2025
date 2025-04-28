@@ -35,23 +35,36 @@
             $this->coleccionDeVuelosProgramados = $coleccionDeVuelosProgramados;
         }
 
+        private function muestraArreglo($arreglo){
+            $cadena = "";
+        
+            if(count($arreglo) == 0){
+                $cadena = "[Esta colección no tiene elementos]\n";
+            } else {
+                for($i=0; $i < count($arreglo); $i++){
+                    $cadena = $cadena . "Elemento N°". $i+1 . ": ". $arreglo[$i] ."\n";
+                }
+            }
+            return $cadena;
+        }
+
         //CADENA DE CARACTERES CON LOS VALORES DE LOS ATRIBUTOS.
         public function __toString(){
             return
             "\nInformacion de la aerolinea:".
             "\n -> Identificacion:".$this->getId().
             "\n -> Nombre:".$this->getNombre().
-            "\nVuelos:".implode(',',$this->getColeccionDeVuelos());
+            "\nVuelos:\n".$this->muestraArreglo($this->getColeccionDeVuelos())."\n";
         }
 
         public function darVueloADestino($destino, $cantAsientosLibres){
             $colVuelosXDestino = [];
             $this->coleccionDeVuelosProgramados = [];
-            foreach ($this->coleccionDeVuelosProgramados as $unVuelo){
+            foreach ($this->getColeccionDeVuelos() as $unVuelo){
                 $elDestino = $unVuelo->getDestino();
                 $asientos = $unVuelo->getAsientosDisponibles();
                 if(($elDestino == $destino)&&($asientos >= $cantAsientosLibres)){
-                    $colVuelosXDestino = array_push($colVuelosXDestino, $unVuelo);
+                    array_push($colVuelosXDestino, $unVuelo);
                 }
             }
             return $colVuelosXDestino;
@@ -60,20 +73,22 @@
         public function incorporarVuelo($objVuelo){
             $incorporacionCorrecta = false;
             $vuelos = null;
-            foreach($this->coleccionDeVuelosProgramados as $unVuelo){
-                $elDestino = $unVuelo->getDestino();
-                $fecha = $unVuelo->getFecha();
-                $horario = $unVuelo->getHoraPartida();
-                if($elDestino != ($objVuelo->getDestino())){
-                    if($fecha != ($objVuelo->getFecha())){
-                        if($horario != ($objVuelo->getHoraPartida())){
-                            $vuelos = $this->coleccionDeVuelosProgramados;
-                            array_push($vuelos, $objVuelo);
-                            $this->setColeccionDeVuelos($vuelos);
-                            $incorporacionCorrecta = true;
-                        }
-                    }
+            $i = 0;
+
+            while (!$incorporacionCorrecta && ($i < count($this->getColeccionDeVuelos()))){
+                $elDestino = $objVuelo->getDestino();
+                $fecha = $objVuelo->getFecha();
+                $horario = $objVuelo->getHoraPartida();
+                if (($elDestino != ($objVuelo->getDestino()))&&($fecha != ($objVuelo->getFecha()))&&($horario != ($objVuelo->getHoraPartida()))){
+                    $vuelos = $this->coleccionDeVuelosProgramados;
+                    array_push($vuelos, $objVuelo);
+                    $this->setColeccionDeVuelos($vuelos);
+                    $incorporacionCorrecta = true;
                 }
+                $i++;
+            }
+            if($incorporacionCorrecta){
+                $vuelos = $this->coleccionDeVuelosProgramados;
             }
             return $incorporacionCorrecta;
         }
@@ -81,26 +96,21 @@
         public function venderVueloADestino($cantAsientos, $destino, $unaFecha){
             $vueloDisponible = false;
             $i = 0;
-            $venta = null;
-            while(!$vueloDisponible && ($i < count($this->coleccionDeVuelosProgramados))){
+            $vuelo = null;
+            while(!$vueloDisponible && ($i < count($this->getColeccionDeVuelos()))){
                 $unVuelo = $this->coleccionDeVuelosProgramados[$i];
                 $elDestino = $unVuelo->getDestino();
                 $fecha = $unVuelo->getFecha();
                 $cant_asientos = $unVuelo->getCantidadAsientosDisponibles();
 
-                if($cant_asientos >= $cantAsientos){
-                    if($elDestino == $destino){
-                        if($fecha == $unaFecha){
-                            $vueloDisponible = true;
-                        }
-                    }
+                if(($cant_asientos >= $cantAsientos)&&($elDestino == $destino)&&($fecha == $unaFecha)){
+                    $vueloDisponible = true;
                 }
                 $i++;
             }
             if($vueloDisponible){
-                //$vueloAnterior es para obtener el $i anterior de la repetitiva while.
-                $vueloAnterior = $this->coleccionDeVuelosProgramados[$i-1];
-                $venta = $vueloAnterior->asignarAsientosDisponibles();
+                $vuelo = $this->coleccionDeVuelosProgramados;
+                $venta = $vuelo->asignarAsientosDisponibles();
             }
             return $venta;
         }

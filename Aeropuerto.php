@@ -35,28 +35,81 @@
             $this->coleccionDeAerolineas = $coleccionDeAerolineas;
         }
 
+        private function muestraArreglo($arreglo){
+            $cadena = "";
+        
+            if(count($arreglo) == 0){
+                $cadena = "[Esta colección no tiene elementos]\n";
+            } else {
+                for($i=0; $i < count($arreglo); $i++){
+                    $cadena = $cadena . "Elemento N°". $i+1 . ": ". $arreglo[$i] ."\n";
+                }
+            }
+            return $cadena;
+        }
+
         //CADENA DE CARACTERES CON LOS VALORES DE LOS ATRIBUTOS.
         public function __toString(){
             return
             "\nInformacion del aeropuerto:".
             "\n -> Denominacion:".$this->getDenominacion().
             "\n -> Direccion:".$this->getDireccion().
-            "\nAerolineas:".implode(',',$this->getColeccionDeAerolineas());
+            "\nAerolineas:\n".$this->muestraArreglo($this->getColeccionDeAerolineas())."\n";
         }
 
         public function  retornarVuelosAerolinea($objAerolinea){
             $this->coleccionDeAerolineas = [];
-            foreach($objAerolinea->getColeccionDeVuelosProgramados() as $unaAerolinea){
-                $nombreAerolinea = $unaAerolinea->getNombre();
+            $aerolineaEncontrada = false;
+            $i = 0;
+            $aerolinea = null;
+
+            while(!$aerolineaEncontrada &&($i < count($this->getColeccionDeAerolineas()))){
+                $nombreAerolinea = $objAerolinea->getNombre();
                 if($objAerolinea->getNombre() == $nombreAerolinea){
-                    $this->coleccionDeAerolineas = array_push($this->coleccionDeAerolineas, $unaAerolinea);
+                    $aerolineaEncontrada = true;
+                    array_push($this->coleccionDeAerolineas, $objAerolinea);
                 }
             }
-            return $this->coleccionDeAerolineas;
+            if($aerolineaEncontrada){
+                $aerolinea = $objAerolinea->asignarAsientosDisponibles();
+            }
+            return $aerolinea;
         }
 
         public function ventaAutomatica($cantAsientos, $fecha, $destino){
-            
+            $ventaRealizada = false;
+            $i=0;
+            $aerolineaEncontrada = false;
+            while(!$ventaRealizada &&($i < count($this->getColeccionDeAerolineas()))){
+                $coleccionVuelos = $this->retornarVuelosAerolinea($this->coleccionDeAerolineas[$i]->getNombre());
+                $j = 0;
+                while(!$aerolineaEncontrada &&($j < count($coleccionVuelos))){
+                    if(($coleccionVuelos[$j]->getFecha() == $fecha)&&($coleccionVuelos[$j]->getDestino() == $destino)&&($coleccionVuelos[$j]->getAsientosDisponibles() >= $cantAsientos)){
+                        $aerolineaEncontrada = true;
+                    }
+                    $j++;
+                }
+                if($aerolineaEncontrada){
+                    $ventaRealizada = true;
+                }    
+                $i++;
+            }
+            return $ventaRealizada;
+        }
+
+        public function promedioRecaudadoXAerolinea($idAerolinea){
+            $importeTotalAerolinea = 0;
+            $i = 0;
+            $aerolineaEncontrada = false;
+            $colAerolineas = $this->getColeccionDeAerolineas();
+            while(!$aerolineaEncontrada &&($i < count($colAerolineas))){
+                if($colAerolineas[$i]->getId() == $idAerolinea){
+                    $aerolineaEncontrada = true;
+                    $importeTotalAerolinea = $colAerolineas[$i]->montoPromedioRecaudado();
+                }
+                $i++;
+            }
+            return $importeTotalAerolinea;
         }
 
     }
