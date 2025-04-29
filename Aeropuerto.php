@@ -38,23 +38,14 @@
         private function muestraArreglo($arreglo){
             $cadena = "";
         
-            if(count($arreglo) == 0){
-                $cadena = "[Esta colección no tiene elementos]\n";
-            } else {
+            if(count($arreglo) > 0){
                 for($i=0; $i < count($arreglo); $i++){
                     $cadena = $cadena . "Elemento N°". $i+1 . ": ". $arreglo[$i] ."\n";
                 }
+            } else {
+                $cadena = "[Esta colección no tiene elementos]\n";
             }
             return $cadena;
-        }
-
-        //CADENA DE CARACTERES CON LOS VALORES DE LOS ATRIBUTOS.
-        public function __toString(){
-            return
-            "\nInformacion del aeropuerto:".
-            "\n -> Denominacion:".$this->getDenominacion().
-            "\n -> Direccion:".$this->getDireccion().
-            "\nAerolineas:\n".$this->muestraArreglo($this->getColeccionDeAerolineas())."\n";
         }
 
         public function  retornarVuelosAerolinea($objAerolinea){
@@ -80,6 +71,7 @@
             $ventaRealizada = false;
             $i=0;
             $aerolineaEncontrada = false;
+            $this->coleccionDeAerolineas = [];
             while(!$ventaRealizada &&($i < count($this->getColeccionDeAerolineas()))){
                 $coleccionVuelos = $this->retornarVuelosAerolinea($this->coleccionDeAerolineas[$i]->getNombre());
                 $j = 0;
@@ -112,6 +104,14 @@
             return $importeTotalAerolinea;
         }
 
+        //CADENA DE CARACTERES CON LOS VALORES DE LOS ATRIBUTOS.
+        public function __toString(){
+            return
+            "\nInformacion del aeropuerto:".
+            "\n -> Denominacion:".$this->getDenominacion().
+            "\n -> Direccion:".$this->getDireccion().
+            "\nAerolineas:\n".$this->muestraArreglo($this->getColeccionDeAerolineas())."\n";
+        }
     }
 
 ?>

@@ -1,5 +1,5 @@
 <?php
-    class Aerolineas{
+    class Aerolinea{
         //ATRIBUTOS:
         private $id;
         private $nombre;
@@ -38,23 +38,14 @@
         private function muestraArreglo($arreglo){
             $cadena = "";
         
-            if(count($arreglo) == 0){
-                $cadena = "[Esta colección no tiene elementos]\n";
-            } else {
+            if(count($arreglo) > 0){
                 for($i=0; $i < count($arreglo); $i++){
                     $cadena = $cadena . "Elemento N°". $i+1 . ": ". $arreglo[$i] ."\n";
                 }
+            } else {
+                $cadena = "[Esta colección no tiene elementos]\n";
             }
             return $cadena;
-        }
-
-        //CADENA DE CARACTERES CON LOS VALORES DE LOS ATRIBUTOS.
-        public function __toString(){
-            return
-            "\nInformacion de la aerolinea:".
-            "\n -> Identificacion:".$this->getId().
-            "\n -> Nombre:".$this->getNombre().
-            "\nVuelos:\n".$this->muestraArreglo($this->getColeccionDeVuelos())."\n";
         }
 
         public function darVueloADestino($destino, $cantAsientosLibres){
@@ -96,7 +87,6 @@
         public function venderVueloADestino($cantAsientos, $destino, $unaFecha){
             $vueloDisponible = false;
             $i = 0;
-            $vuelo = null;
             while(!$vueloDisponible && ($i < count($this->getColeccionDeVuelos()))){
                 $unVuelo = $this->coleccionDeVuelosProgramados[$i];
                 $elDestino = $unVuelo->getDestino();
@@ -109,8 +99,7 @@
                 $i++;
             }
             if($vueloDisponible){
-                $vuelo = $this->coleccionDeVuelosProgramados;
-                $venta = $vuelo->asignarAsientosDisponibles();
+                $venta = $unVuelo->asignarAsientosDisponibles();
             }
             return $venta;
         }
@@ -127,6 +116,15 @@
                 $promedio = $importeTotal / $cantVuelos;
             }
             return $promedio;
+        }
+
+        //CADENA DE CARACTERES CON LOS VALORES DE LOS ATRIBUTOS.
+        public function __toString(){
+            return
+            "\nInformacion de la aerolinea:".
+            "\n -> Identificacion:".$this->getId().
+            "\n -> Nombre:".$this->getNombre().
+            "\nVuelos:\n".$this->muestraArreglo($this->getColeccionDeVuelos())."\n";
         }
     }
 ?>

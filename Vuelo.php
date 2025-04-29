@@ -83,6 +83,16 @@
             $this->objPersonaResponsable = $objPersonaResponsable;
         }
 
+        public function  asignarAsientosDisponibles($cantAsientos){
+            $asignacionCompleta = false;
+            if($cantAsientos <= $this->getCantAsientosDisponibles()){
+                $cantAsientosRestantes = $this->getCantAsientosTotales() - $cantAsientos;
+                $this->setCantAsientosDisponibles($cantAsientosRestantes);
+                $asignacionCompleta = true;
+            }
+            return $asignacionCompleta;
+        }
+        
         //CADENA DE CARACTERES CON LOS VALORES DE LOS ATRIBUTOS.
         public function __toString(){
             return
@@ -97,16 +107,5 @@
             "\n -> Cantidad de asientos disponibles:".$this->getCantAsientosDisponibles().
             $this->getObjPersonaResponsable();
         }
-
-        public function  asignarAsientosDisponibles($cantAsientos){
-            $asignacionCompleta = false;
-            if($cantAsientos <= $this->getCantAsientosDisponibles()){
-                $cantAsientosRestantes = $this->getCantAsientosTotales() - $cantAsientos;
-                $this->setCantAsientosDisponibles($cantAsientosRestantes);
-                $asignacionCompleta = true;
-            }
-            return $asignacionCompleta;
-        }
-
     }
 ?>
