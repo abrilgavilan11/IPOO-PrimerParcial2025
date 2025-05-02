@@ -49,41 +49,36 @@
         }
 
         public function  retornarVuelosAerolinea($objAerolinea){
-            $this->coleccionDeAerolineas = [];
             $aerolineaEncontrada = false;
             $i = 0;
-            $aerolinea = null;
+            $vuelos = null;
 
             while(!$aerolineaEncontrada &&($i < count($this->getColeccionDeAerolineas()))){
-                $nombreAerolinea = $objAerolinea->getNombre();
-                if($objAerolinea->getNombre() == $nombreAerolinea){
+                $unaAerolinea = $this->coleccionDeAerolineas[$i];
+                if($unaAerolinea->getId() == $objAerolinea->getId()){
+                    $vuelos = $unaAerolinea->getColeccionDeVuelos();
                     $aerolineaEncontrada = true;
-                    array_push($this->coleccionDeAerolineas, $objAerolinea);
                 }
+                $i++;
             }
-            if($aerolineaEncontrada){
-                $aerolinea = $objAerolinea->asignarAsientosDisponibles();
-            }
-            return $aerolinea;
+            
+            return $vuelos;
         }
 
         public function ventaAutomatica($cantAsientos, $fecha, $destino){
             $ventaRealizada = false;
             $i=0;
-            $aerolineaEncontrada = false;
-            $this->coleccionDeAerolineas = [];
             while(!$ventaRealizada &&($i < count($this->getColeccionDeAerolineas()))){
-                $coleccionVuelos = $this->retornarVuelosAerolinea($this->coleccionDeAerolineas[$i]->getNombre());
+                $aerolinea = $this->coleccionDeAerolineas[$i];
+                $coleccionVuelos = $aerolinea->getColeccionDeVuelos();
                 $j = 0;
-                while(!$aerolineaEncontrada &&($j < count($coleccionVuelos))){
-                    if(($coleccionVuelos[$j]->getFecha() == $fecha)&&($coleccionVuelos[$j]->getDestino() == $destino)&&($coleccionVuelos[$j]->getAsientosDisponibles() >= $cantAsientos)){
-                        $aerolineaEncontrada = true;
+                while(!$ventaRealizada &&($j < count($coleccionVuelos))){
+                    $vuelo = $coleccionVuelos[$j];
+                    if(($vuelo->getFecha() == $fecha)&&($vuelo->getDestino() == $destino)&&($vuelo->getCantAsientosDisponibles() >= $cantAsientos)){
+                        $ventaRealizada = true;
                     }
                     $j++;
                 }
-                if($aerolineaEncontrada){
-                    $ventaRealizada = true;
-                }    
                 $i++;
             }
             return $ventaRealizada;
